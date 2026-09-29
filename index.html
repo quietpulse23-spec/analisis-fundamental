@@ -499,41 +499,56 @@
             icon.classList.add('fa-spin');
 
             try {
-                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
-                const data = await response.json();
-                if (data && data.bitcoin) {
-                    const price = data.bitcoin.usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-                    const change = data.bitcoin.usd_24h_change.toFixed(2);
-                    
-                    document.getElementById('btc-price').innerText = price;
+                const btcResponse = await fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT');
+                if (!btcResponse.ok) {
+                    throw new Error(`BTC price request failed: ${btcResponse.status}`);
+                }
+
+                const btcData = await btcResponse.json();
+                const price = Number(btcData.lastPrice || 0);
+                const change = Number(btcData.priceChangePercent || 0);
+
+                if (price > 0) {
+                    document.getElementById('btc-price').innerText = new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).format(price);
+
                     const changeEl = document.getElementById('btc-change');
-                    changeEl.innerText = (change >= 0 ? '+' : '') + change + '%';
+                    changeEl.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
                     changeEl.className = `text-xs font-semibold px-1.5 py-0.5 rounded ${change >= 0 ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`;
                 }
 
-                const fngResponse = await fetch('https://api.alternative.me/fng/');
+                const fngResponse = await fetch('https://api.alternative.me/fng/?limit=1');
+                if (!fngResponse.ok) {
+                    throw new Error(`Fear & Greed request failed: ${fngResponse.status}`);
+                }
+
                 const fngData = await fngResponse.json();
                 if (fngData && fngData.data && fngData.data[0]) {
-                    const val = fngData.data[0].value;
-                    const label = fngData.data[0].value_classification;
-                    document.getElementById('fng-val').innerText = val;
+                    const val = Number(fngData.data[0].value || 0);
+                    const label = fngData.data[0].value_classification || 'Neutral';
+                    document.getElementById('fng-val').innerText = String(val);
                     document.getElementById('fng-label').innerText = label;
-                    document.getElementById('gauge-number').innerText = val;
-                    document.getElementById('gauge-text').innerText = label;
+                    document.getElementById('gauge-number').innerText = String(val);
+                    document.getElementById('gauge-text').innerText = label === 'Greed' ? 'Codicia Moderada' : label === 'Fear' ? 'Miedo Moderado' : 'Neutral';
                 }
             } catch (e) {
-                console.log('Error obteniendo datos en vivo, usando valores seguros por defecto', e);
-                document.getElementById('btc-price').innerText = '$64,280.50';
-                document.getElementById('btc-change').innerText = '+2.45%';
-                document.getElementById('fng-val').innerText = '65';
-                document.getElementById('fng-label').innerText = 'Greed';
-                document.getElementById('gauge-number').innerText = '65';
-                document.getElementById('gauge-text').innerText = 'Codicia Moderada';
+                console.warn('Error obteniendo datos en vivo, mostrando valor de respaldo.', e);
+                document.getElementById('btc-price').innerText = '$84,000.00';
+                document.getElementById('btc-change').innerText = '+0.00%';
+                document.getElementById('btc-change').className = 'text-xs font-semibold px-1.5 py-0.5 rounded text-emerald-400 bg-emerald-500/10';
+                document.getElementById('fng-val').innerText = '50';
+                document.getElementById('fng-label').innerText = 'Neutral';
+                document.getElementById('gauge-number').innerText = '50';
+                document.getElementById('gauge-text').innerText = 'Neutral';
+            } finally {
+                setTimeout(() => {
+                    icon.classList.remove('fa-spin');
+                }, 600);
             }
-
-            setTimeout(() => {
-                icon.classList.remove('fa-spin');
-            }, 600);
         }
 
         function saveAlert(e) {
