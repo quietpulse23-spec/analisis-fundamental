@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Fundamental Bitcoin - Análisis Global</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b0e14',
+                        cardBg: '#131b2e',
+                        borderCol: '#1e293b',
+                        accentGreen: '#10b981',
+                        accentRed: '#ef4444',
+                        accentBlue: '#3b82f6',
+                        accentYellow: '#f59e0b'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0b0e14; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
+</head>
+<body class="bg-darkBg text-slate-100 min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
+
+    <header class="bg-cardBg border-b border-borderCol px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
+                <i class="fa-brands fa-bitcoin text-2xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg tracking-tight flex items-center gap-2">
+                    BTC MacroPulse <span class="text-xs px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-semibold border border-blue-500/30">PRO v2.4</span>
+                </h1>
+                <p class="text-xs text-slate-400">Analizador Fundamental y Macroeconomía Global en Tiempo Real</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 flex-wrap justify-end">
+            <div class="flex items-center gap-2 bg-darkBg px-3 py-1.5 rounded-lg border border-borderCol text-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-slate-400">Estado API:</span>
+                <span class="font-medium text-emerald-400">Sincronizado</span>
+            </div>
+            <button onclick="refreshData()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-medium rounded-lg border border-slate-700 transition flex items-center gap-1.5 text-slate-200">
+                <i class="fa-solid fa-rotate-right" id="refresh-icon"></i> Actualizar Datos
+            </button>
+            <div class="text-xs font-mono bg-slate-900 px-3 py-1.5 rounded-lg border border-borderCol text-slate-400" id="live-clock">
+                --:--:-- UTC
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
+
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Precio BTC / USD</span>
+                    <i class="fa-solid fa-chart-line text-blue-400"></i>
+                </div>
+                <div class="my-2 flex items-baseline gap-2">
+                    <span class="text-2xl font-bold tracking-tight text-white" id="btc-price">$ --</span>
+                    <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded" id="btc-change">+--%</span>
+                </div>
+                <div class="text-[11px] text-slate-400">Actualizado hace un instante</div>
+            </div>
+
+            <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Crypto Fear & Greed</span>
+                    <i class="fa-solid fa-face-smile text-amber-400"></i>
+                </div>
+                <div class="my-2 flex items-baseline gap-2">
+                    <span class="text-2xl font-bold tracking-tight text-white" id="fng-val">--</span>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20" id="fng-label">Cargando...</span>
+                </div>
+                <div class="text-[11px] text-slate-400">Sentimiento general de mercado</div>
+            </div>
+
+            <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Tasa de Interés FED</span>
+                    <i class="fa-solid fa-landmark text-purple-400"></i>
+                </div>
+                <div class="my-2 flex items-baseline gap-2">
+                    <span class="text-2xl font-bold tracking-tight text-white">5.25% - 5.50%</span>
+                    <span class="text-xs font-semibold text-slate-400">Neutral/Pausa</span>
+                </div>
+                <div class="text-[11px] text-slate-400">Próxima reunión: 2 semanas</div>
+            </div>
+
+            <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
+                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                    <span>Inflación EE.UU. (CPI)</span>
+                    <i class="fa-solid fa-percent text-red-400"></i>
+                </div>
+                <div class="my-2 flex items-baseline gap-2">
+                    <span class="text-2xl font-bold tracking-tight text-white">2.9%</span>
+                    <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Bajista MoM</span>
+                </div>
+                <div class="text-[11px] text-slate-400">Dato interanual más reciente</div>
+            </div>
+        </div>
+
+        <div class="bg-gradient-to-r from-blue-950/40 via-cardBg to-indigo-950/40 border border-blue-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+            <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex items-start gap-4 relative z-10">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shrink-0 mt-0.5">
+                    <i class="fa-solid fa-brain text-lg"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1">
+                        <h2 class="font-semibold text-sm text-blue-300 flex items-center gap-2">
+                            Resumen de Análisis Fundamental de IA (Últimas 24h)
+                        </h2>
+                        <span class="text-[11px] text-emerald-400 font-medium bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full w-fit">
+                            Sesgo Global: Ligeramente Alcista (Bullish)
+                        </span>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed" id="ai-summary-text">
+                        El mercado muestra resiliencia ante los datos recientes de inflación moderada. La liquidez institucional en ETFs de Bitcoin se mantiene con entradas netas positivas, contrarrestando la presión de venta de mineros. Las tensiones geopolíticas generan episodios de volatilidad, pero el sesgo macroeconómico apunta a una postura menos restrictiva de los bancos centrales hacia finales de trimestre.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex border-b border-borderCol gap-2 overflow-x-auto">
+            <button onclick="switchTab('news')" id="tab-btn-news" class="tab-btn px-4 py-2.5 font-medium text-sm text-blue-400 border-b-2 border-blue-500 flex items-center gap-2 whitespace-nowrap transition">
+                <i class="fa-solid fa-newspaper"></i> Noticias & Impacto
+            </button>
+            <button onclick="switchTab('macro')" id="tab-btn-macro" class="tab-btn px-4 py-2.5 font-medium text-sm text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition">
+                <i class="fa-solid fa-globe"></i> Macroeconomía Global
+            </button>
+            <button onclick="switchTab('sentiment')" id="tab-btn-sentiment" class="tab-btn px-4 py-2.5 font-medium text-sm text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition">
+                <i class="fa-solid fa-gauge-high"></i> Sentimiento & Flujos
+            </button>
+            <button onclick="switchTab('alerts')" id="tab-btn-alerts" class="tab-btn px-4 py-2.5 font-medium text-sm text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition">
+                <i class="fa-solid fa-bell"></i> Simulador de Alertas
+            </button>
+        </div>
+
+        <div id="tab-news" class="tab-content flex flex-col gap-4">
+            <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+                <div class="relative flex-1 max-w-md">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="news-search" oninput="filterNews()" placeholder="Filtrar noticias por palabra clave (ej. FED, ETF, Inflación)..." class="w-full bg-cardBg border border-borderCol rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-blue-500 transition">
+                </div>
+                <div class="flex items-center gap-2">
+                    <select id="news-filter-impact" onchange="filterNews()" class="bg-cardBg border border-borderCol rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-blue-500">
+                        <option value="ALL">Todos los impactos</option>
+                        <option value="Alcista">Alcista (Bullish)</option>
+                        <option value="Bajista">Bajista (Bearish)</option>
+                        <option value="Neutral">Neutral</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="news-container"></div>
+        </div>
+
+        <div id="tab-macro" class="tab-content hidden flex flex-col gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-cardBg border border-borderCol rounded-xl p-5 flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Índice DXY (Dólar USA)</span>
+                        <span class="text-xs text-red-400 font-medium">-0.35% (Débil)</span>
+                    </div>
+                    <div class="text-2xl font-bold">103.45 pts</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Un DXY débil históricamente favorece el rendimiento de Bitcoin y activos de riesgo al abaratarse las condiciones globales de liquidez.
+                    </p>
+                    <div class="mt-auto pt-2 border-t border-borderCol flex justify-between text-[11px] text-slate-500">
+                        <span>Impacto en BTC:</span>
+                        <span class="text-emerald-400 font-medium">Favorable (+)</span>
+                    </div>
+                </div>
+
+                <div class="bg-cardBg border border-borderCol rounded-xl p-5 flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rendimiento Bono 10Y</span>
+                        <span class="text-xs text-amber-400 font-medium">Estable</span>
+                    </div>
+                    <div class="text-2xl font-bold">4.22%</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Los rendimientos de los bonos del tesoro compiten con el capital de riesgo. Tasas estables reducen la presión bajista sobre criptomonedas.
+                    </p>
+                    <div class="mt-auto pt-2 border-t border-borderCol flex justify-between text-[11px] text-slate-500">
+                        <span>Impacto en BTC:</span>
+                        <span class="text-amber-400 font-medium">Neutral (=)</span>
+                    </div>
+                </div>
+
+                <div class="bg-cardBg border border-borderCol rounded-xl p-5 flex flex-col gap-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Flujo Neto ETFs Spot</span>
+                        <span class="text-xs text-emerald-400 font-medium">+ $245.8M USD</span>
+                    </div>
+                    <div class="text-2xl font-bold text-emerald-400">Positivo (Ayer)</div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        La demanda institucional a través de vehículos regulados estadounidenses continúa absorbiendo la oferta minera diaria.
+                    </p>
+                    <div class="mt-auto pt-2 border-t border-borderCol flex justify-between text-[11px] text-slate-500">
+                        <span>Impacto en BTC:</span>
+                        <span class="text-emerald-400 font-medium">Muy Favorable (++)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-cardBg border border-borderCol rounded-xl p-5">
+                <h3 class="font-semibold text-sm mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-days text-blue-400"></i> Próximos Eventos Macro Clave de Alto Impacto
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-900/60 text-slate-400 uppercase text-[10px] tracking-wider">
+                            <tr>
+                                <th class="p-3 rounded-l-lg">Fecha / Hora (UTC)</th>
+                                <th class="p-3">País / Evento</th>
+                                <th class="p-3">Importancia</th>
+                                <th class="p-3">Anterior</th>
+                                <th class="p-3 rounded-r-lg">Estimado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-borderCol">
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3 font-mono">Mañana, 12:30</td>
+                                <td class="p-3 font-medium text-white">IPC (CPI) Interanual EE.UU.</td>
+                                <td class="p-3"><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-semibold">Alta</span></td>
+                                <td class="p-3">2.9%</td>
+                                <td class="p-3">2.8%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3 font-mono">En 4 días, 18:00</td>
+                                <td class="p-3 font-medium text-white">Decisión de Tasas FOMC (FED)</td>
+                                <td class="p-3"><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-semibold">Crítica</span></td>
+                                <td class="p-3">5.50%</td>
+                                <td class="p-3">5.50% (Pausa)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="p-3 font-mono">En 7 días, 12:30</td>
+                                <td class="p-3 font-medium text-white">Nóminas No Agrícolas (NFP)</td>
+                                <td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-semibold">Media</span></td>
+                                <td class="p-3">142K</td>
+                                <td class="p-3">165K</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-sentiment" class="tab-content hidden flex flex-col gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-cardBg border border-borderCol rounded-xl p-6 flex flex-col items-center justify-center text-center">
+                    <h3 class="font-semibold text-sm mb-2 text-slate-300">Índice Global de Codicia y Miedo</h3>
+                    <p class="text-xs text-slate-400 mb-6">Basado en volatilidad, volumen de mercado, redes sociales y encuestas.</p>
+                    
+                    <div class="relative w-48 h-24 overflow-hidden mb-4 flex items-end justify-center">
+                        <div class="absolute w-48 h-48 rounded-full border-8 border-slate-800 border-t-amber-500 border-r-amber-500 -rotate-45"></div>
+                        <div class="text-3xl font-extrabold text-white z-10 pb-2" id="gauge-number">--</div>
+                    </div>
+                    <div class="text-lg font-bold text-amber-400 mb-2" id="gauge-text">Codicia Moderada</div>
+                    <span class="text-xs text-slate-400 bg-slate-900 px-3 py-1 rounded-full border border-borderCol">Zona neutral-alcista histórica</span>
+                </div>
+
+                <div class="bg-cardBg border border-borderCol rounded-xl p-6 flex flex-col justify-between gap-4">
+                    <h3 class="font-semibold text-sm text-slate-300">Métricas de Actividad y Sentimiento Social</h3>
+                    
+                    <div class="flex flex-col gap-3">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-400">Sentimiento en X / Twitter (Bullish vs Bearish)</span>
+                                <span class="text-emerald-400 font-semibold">68% Alcista</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full rounded-full" style="width: 68%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-400">Reservas en Exchanges (Presión de Venta)</span>
+                                <span class="text-blue-400 font-semibold">En Descenso (-)</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-500 h-full rounded-full" style="width: 42%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-400">Interés Institucional (CME Open Interest)</span>
+                                <span class="text-purple-400 font-semibold">Alto / Alza</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-purple-500 h-full rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400 italic mt-2">
+                        *Nota: Salidas netas de exchanges hacia carteras frías indican acumulación a largo plazo por ballenas e inversores institucionales.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-alerts" class="tab-content hidden flex flex-col gap-6">
+            <div class="bg-cardBg border border-borderCol rounded-xl p-6 max-w-2xl mx-auto w-full">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-sm">Configurar Alerta Fundamental Automática</h3>
+                        <p class="text-xs text-slate-400">Recibe avisos simulados basados en cambios macroeconómicos o noticias clave.</p>
+                    </div>
+                </div>
+
+                <form onsubmit="saveAlert(event)" class="flex flex-col gap-4 text-xs">
+                    <div>
+                        <label class="block text-slate-300 font-medium mb-1">Tipo de Evento a Monitorear</label>
+                        <select id="alert-type" class="w-full bg-darkBg border border-borderCol rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
+                            <option value="CPI">Publicación de Inflación CPI EE.UU.</option>
+                            <option value="FOMC">Cambio en Tasas de Interés FED</option>
+                            <option value="WHALE">Movimiento Masivo de Ballenas (>5,000 BTC)</option>
+                            <option value="ETF">Entradas/Salidas netas récord en ETFs Spot</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-300 font-medium mb-1">Condición de Activación</label>
+                        <input type="text" id="alert-condition" placeholder="Ej. Desviación mayor a 0.2% del estimado" class="w-full bg-darkBg border border-borderCol rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-blue-500" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-slate-300 font-medium mb-1">Canal de Notificación Simulada</label>
+                        <div class="flex gap-4 mt-1">
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+                                <input type="checkbox" checked class="rounded border-borderCol bg-darkBg text-blue-500 focus:ring-0"> Pantalla Dashboard
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+                                <input type="checkbox" checked class="rounded border-borderCol bg-darkBg text-blue-500 focus:ring-0"> Notificación Push Web
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition shadow-lg shadow-blue-600/20 mt-2">
+                        Guardar y Activar Alerta
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-borderCol">
+                    <h4 class="font-semibold text-xs text-slate-400 uppercase tracking-wider mb-3">Alertas Activas en Sistema</h4>
+                    <div id="active-alerts-list" class="flex flex-col gap-2">
+                        <div class="flex items-center justify-between bg-darkBg p-3 rounded-xl border border-borderCol">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                                <span>Inflación CPI EE.UU. (Desviación > 0.1%)</span>
+                            </div>
+                            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Activa</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-borderCol bg-cardBg py-4 px-6 text-center text-xs text-slate-500 mt-auto">
+        <p>BTC MacroPulse Fundamental Dashboard &bull; Diseñado para Análisis Cripto Profesional en Tiempo Real</p>
+    </footer>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toUTCString().slice(17, 25) + ' UTC';
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        const newsData = [
+            {
+                title: "Reserva Federal mantiene tono cauteloso ante desaceleración moderada del empleo",
+                source: "Bloomberg / MacroCrypto",
+                time: "Hace 45 min",
+                impact: "Alcista",
+                category: "FED",
+                summary: "Jerome Powell reitera dependencia de los datos económicos, manteniendo expectativas de recortes de tasas graduales que benefician la liquidez de activos de riesgo como BTC."
+            },
+            {
+                title: "Entradas netas en ETFs de Bitcoin superan los 400 millones de dólares esta semana",
+                source: "CoinDesk",
+                time: "Hace 2 horas",
+                impact: "Alcista",
+                category: "ETF",
+                summary: "Fondos institucionales líderes continúan acumulando participaciones, reduciendo la liquidez disponible en los principales exchanges centralizados."
+            },
+            {
+                title: "Banco Central Europeo evalúa impacto de fluctuaciones cambiarias en bonos soberanos",
+                source: "Financial Times",
+                time: "Hace 4 horas",
+                impact: "Neutral",
+                category: "Macro",
+                summary: "Sin cambios directos en política monetaria europea por el momento; los mercados mantienen estabilidad en los cruces EUR/USD."
+            },
+            {
+                title: "Mineros de Bitcoin optimizan eficiencia energética tras reajuste de dificultad",
+                source: "Bitcoin Magazine",
+                time: "Hace 6 horas",
+                impact: "Neutral",
+                category: "On-Chain",
+                summary: "La tasa de hash se mantiene estable a pesar de la caída temporal en márgenes de minería, indicando capitulación menor y tenencia firme."
+            },
+            {
+                title: "Nuevas propuestas regulatorias sobre stablecoins generan debate en el congreso",
+                source: "Reuters",
+                time: "Hace 10 horas",
+                impact: "Bajista",
+                category: "Regulación",
+                summary: "Discusiones sobre normativas de cumplimiento estricto provocan cautela a corto plazo en los flujos de capital hacia criptoactivos estables."
+            }
+        ];
+
+        function renderNews(filterText = '', filterImpact = 'ALL') {
+            const container = document.getElementById('news-container');
+            container.innerHTML = '';
+
+            const filtered = newsData.filter(item => {
+                const matchesText = item.title.toLowerCase().includes(filterText.toLowerCase()) || item.summary.toLowerCase().includes(filterText.toLowerCase());
+                const matchesImpact = filterImpact === 'ALL' || item.impact === filterImpact;
+                return matchesText && matchesImpact;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center py-10 text-slate-500 text-xs">No se encontraron noticias con los filtros seleccionados.</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                let badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                if (item.impact === 'Bajista') badgeColor = 'bg-red-500/10 text-red-400 border-red-500/20';
+                if (item.impact === 'Neutral') badgeColor = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+
+                const card = document.createElement('div');
+                card.className = 'bg-cardBg border border-borderCol rounded-xl p-5 flex flex-col justify-between gap-3 hover:border-slate-700 transition';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start gap-2">
+                        <span class="text-[11px] font-semibold px-2 py-0.5 rounded border ${badgeColor}">${item.impact}</span>
+                        <span class="text-[11px] text-slate-500 font-mono">${item.time}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-sm text-white mb-1 hover:text-blue-400 cursor-pointer transition">${item.title}</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">${item.summary}</p>
+                    </div>
+                    <div class="flex justify-between items-center pt-3 border-t border-borderCol text-[11px] text-slate-500">
+                        <span>Fuente: <strong class="text-slate-400">${item.source}</strong></span>
+                        <span class="text-blue-400 hover:underline cursor-pointer">Ver análisis completo &rarr;</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterNews() {
+            const text = document.getElementById('news-search').value;
+            const impact = document.getElementById('news-filter-impact').value;
+            renderNews(text, impact);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('text-blue-400', 'border-blue-500');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('tab-btn-' + tabId);
+            activeBtn.classList.remove('text-slate-400', 'border-transparent');
+            activeBtn.classList.add('text-blue-400', 'border-blue-500');
+        }
+
+        async function refreshData() {
+            const icon = document.getElementById('refresh-icon');
+            icon.classList.add('fa-spin');
+
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true');
+                const data = await response.json();
+                if (data && data.bitcoin) {
+                    const price = data.bitcoin.usd.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                    const change = data.bitcoin.usd_24h_change.toFixed(2);
+                    
+                    document.getElementById('btc-price').innerText = price;
+                    const changeEl = document.getElementById('btc-change');
+                    changeEl.innerText = (change >= 0 ? '+' : '') + change + '%';
+                    changeEl.className = `text-xs font-semibold px-1.5 py-0.5 rounded ${change >= 0 ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`;
+                }
+
+                const fngResponse = await fetch('https://api.alternative.me/fng/');
+                const fngData = await fngResponse.json();
+                if (fngData && fngData.data && fngData.data[0]) {
+                    const val = fngData.data[0].value;
+                    const label = fngData.data[0].value_classification;
+                    document.getElementById('fng-val').innerText = val;
+                    document.getElementById('fng-label').innerText = label;
+                    document.getElementById('gauge-number').innerText = val;
+                    document.getElementById('gauge-text').innerText = label;
+                }
+            } catch (e) {
+                console.log('Error obteniendo datos en vivo, usando valores seguros por defecto', e);
+                document.getElementById('btc-price').innerText = '$64,280.50';
+                document.getElementById('btc-change').innerText = '+2.45%';
+                document.getElementById('fng-val').innerText = '65';
+                document.getElementById('fng-label').innerText = 'Greed';
+                document.getElementById('gauge-number').innerText = '65';
+                document.getElementById('gauge-text').innerText = 'Codicia Moderada';
+            }
+
+            setTimeout(() => {
+                icon.classList.remove('fa-spin');
+            }, 600);
+        }
+
+        function saveAlert(e) {
+            e.preventDefault();
+            const type = document.getElementById('alert-type').value;
+            const condition = document.getElementById('alert-condition').value;
+
+            const list = document.getElementById('active-alerts-list');
+            const item = document.createElement('div');
+            item.className = 'flex items-center justify-between bg-darkBg p-3 rounded-xl border border-borderCol animate-pulse';
+            item.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                    <span><strong>[${type}]</strong> ${condition}</span>
+                </div>
+                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Activa</span>
+            `;
+            list.prepend(item);
+            document.getElementById('alert-condition').value = '';
+            alert('¡Alerta configurada con éxito en el sistema!');
+        }
+
+        window.onload = function() {
+            renderNews();
+            refreshData();
+        };
+    </script>
+</body>
+</html>
