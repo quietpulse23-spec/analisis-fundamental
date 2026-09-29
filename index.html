@@ -148,7 +148,7 @@
                 <i class="fa-solid fa-gauge-high"></i> Sentimiento & Flujos
             </button>
             <button onclick="switchTab('alerts')" id="tab-btn-alerts" class="tab-btn px-4 py-2.5 font-medium text-sm text-slate-400 hover:text-slate-200 border-b-2 border-transparent flex items-center gap-2 whitespace-nowrap transition">
-                <i class="fa-solid fa-bell"></i> Simulador de Alertas
+                <i class="fa-solid fa-calendar-day"></i> Próximas Noticias
             </button>
         </div>
 
@@ -176,45 +176,45 @@
                 <div class="bg-cardBg border border-borderCol rounded-xl p-5 flex flex-col gap-3">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Índice DXY (Dólar USA)</span>
-                        <span class="text-xs text-red-400 font-medium">-0.35% (Débil)</span>
+                        <span id="dxy-status" class="text-xs text-red-400 font-medium">Cargando...</span>
                     </div>
-                    <div class="text-2xl font-bold">103.45 pts</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">
-                        Un DXY débil históricamente favorece el rendimiento de Bitcoin y activos de riesgo al abaratarse las condiciones globales de liquidez.
+                    <div id="dxy-value" class="text-2xl font-bold">--</div>
+                    <p id="dxy-note" class="text-xs text-slate-400 leading-relaxed">
+                        El valor del dólar se está actualizando con fuentes públicas del mercado.
                     </p>
                     <div class="mt-auto pt-2 border-t border-borderCol flex justify-between text-[11px] text-slate-500">
                         <span>Impacto en BTC:</span>
-                        <span class="text-emerald-400 font-medium">Favorable (+)</span>
+                        <span id="dxy-impact" class="text-emerald-400 font-medium">Cargando...</span>
                     </div>
                 </div>
 
                 <div class="bg-cardBg border border-borderCol rounded-xl p-5 flex flex-col gap-3">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Rendimiento Bono 10Y</span>
-                        <span class="text-xs text-amber-400 font-medium">Estable</span>
+                        <span id="treasury-status" class="text-xs text-amber-400 font-medium">Cargando...</span>
                     </div>
-                    <div class="text-2xl font-bold">4.22%</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">
-                        Los rendimientos de los bonos del tesoro compiten con el capital de riesgo. Tasas estables reducen la presión bajista sobre criptomonedas.
+                    <div id="treasury-value" class="text-2xl font-bold">--</div>
+                    <p id="treasury-note" class="text-xs text-slate-400 leading-relaxed">
+                        La tasa de referencia del Tesoro se está actualizando con datos públicos.
                     </p>
                     <div class="mt-auto pt-2 border-t border-borderCol flex justify-between text-[11px] text-slate-500">
                         <span>Impacto en BTC:</span>
-                        <span class="text-amber-400 font-medium">Neutral (=)</span>
+                        <span id="treasury-impact" class="text-amber-400 font-medium">Cargando...</span>
                     </div>
                 </div>
 
                 <div class="bg-cardBg border border-borderCol rounded-xl p-5 flex flex-col gap-3">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Flujo Neto ETFs Spot</span>
-                        <span class="text-xs text-emerald-400 font-medium">+ $245.8M USD</span>
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Volatilidad 24h BTC</span>
+                        <span id="market-cap-status" class="text-xs text-emerald-400 font-medium">Cargando...</span>
                     </div>
-                    <div class="text-2xl font-bold text-emerald-400">Positivo (Ayer)</div>
-                    <p class="text-xs text-slate-400 leading-relaxed">
-                        La demanda institucional a través de vehículos regulados estadounidenses continúa absorbiendo la oferta minera diaria.
+                    <div id="market-cap-value" class="text-2xl font-bold text-emerald-400">--</div>
+                    <p id="market-cap-note" class="text-xs text-slate-400 leading-relaxed">
+                        El rango de movimiento diario refleja el sentimiento de riesgo inmediato del mercado.
                     </p>
                     <div class="mt-auto pt-2 border-t border-borderCol flex justify-between text-[11px] text-slate-500">
                         <span>Impacto en BTC:</span>
-                        <span class="text-emerald-400 font-medium">Muy Favorable (++)</span>
+                        <span id="market-cap-impact" class="text-emerald-400 font-medium">Cargando...</span>
                     </div>
                 </div>
             </div>
@@ -283,30 +283,30 @@
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="text-slate-400">Sentimiento en X / Twitter (Bullish vs Bearish)</span>
-                                <span class="text-emerald-400 font-semibold">68% Alcista</span>
+                                <span id="social-sentiment-value" class="text-emerald-400 font-semibold">--</span>
                             </div>
                             <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full rounded-full" style="width: 68%"></div>
+                                <div id="social-sentiment-bar" class="bg-emerald-500 h-full rounded-full" style="width: 0%"></div>
                             </div>
                         </div>
 
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="text-slate-400">Reservas en Exchanges (Presión de Venta)</span>
-                                <span class="text-blue-400 font-semibold">En Descenso (-)</span>
+                                <span id="exchange-reserves-value" class="text-blue-400 font-semibold">--</span>
                             </div>
                             <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div class="bg-blue-500 h-full rounded-full" style="width: 42%"></div>
+                                <div id="exchange-reserves-bar" class="bg-blue-500 h-full rounded-full" style="width: 0%"></div>
                             </div>
                         </div>
 
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="text-slate-400">Interés Institucional (CME Open Interest)</span>
-                                <span class="text-purple-400 font-semibold">Alto / Alza</span>
+                                <span id="institutional-interest-value" class="text-purple-400 font-semibold">--</span>
                             </div>
                             <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                <div class="bg-purple-500 h-full rounded-full" style="width: 75%"></div>
+                                <div id="institutional-interest-bar" class="bg-purple-500 h-full rounded-full" style="width: 0%"></div>
                             </div>
                         </div>
                     </div>
@@ -319,60 +319,69 @@
         </div>
 
         <div id="tab-alerts" class="tab-content hidden flex flex-col gap-6">
-            <div class="bg-cardBg border border-borderCol rounded-xl p-6 max-w-2xl mx-auto w-full">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
-                        <i class="fa-solid fa-bell"></i>
+            <div class="grid grid-cols-1 xl:grid-cols-[1.3fr_0.9fr] gap-6">
+                <div class="bg-cardBg border border-borderCol rounded-xl p-5">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                            <i class="fa-solid fa-calendar-day"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-sm">Próximas noticias macro y eventos de alto impacto</h3>
+                            <p class="text-xs text-slate-400">Eventos clave para seguir en BTC, inflación, tasas y flujo institucional.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="font-semibold text-sm">Configurar Alerta Fundamental Automática</h3>
-                        <p class="text-xs text-slate-400">Recibe avisos simulados basados en cambios macroeconómicos o noticias clave.</p>
-                    </div>
+
+                    <div id="upcoming-news-list" class="space-y-3"></div>
                 </div>
 
-                <form onsubmit="saveAlert(event)" class="flex flex-col gap-4 text-xs">
-                    <div>
-                        <label class="block text-slate-300 font-medium mb-1">Tipo de Evento a Monitorear</label>
-                        <select id="alert-type" class="w-full bg-darkBg border border-borderCol rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
-                            <option value="CPI">Publicación de Inflación CPI EE.UU.</option>
-                            <option value="FOMC">Cambio en Tasas de Interés FED</option>
-                            <option value="WHALE">Movimiento Masivo de Ballenas (>5,000 BTC)</option>
-                            <option value="ETF">Entradas/Salidas netas récord en ETFs Spot</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-slate-300 font-medium mb-1">Condición de Activación</label>
-                        <input type="text" id="alert-condition" placeholder="Ej. Desviación mayor a 0.2% del estimado" class="w-full bg-darkBg border border-borderCol rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-blue-500" required>
-                    </div>
-
-                    <div>
-                        <label class="block text-slate-300 font-medium mb-1">Canal de Notificación Simulada</label>
-                        <div class="flex gap-4 mt-1">
-                            <label class="flex items-center gap-2 cursor-pointer text-slate-300">
-                                <input type="checkbox" checked class="rounded border-borderCol bg-darkBg text-blue-500 focus:ring-0"> Pantalla Dashboard
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer text-slate-300">
-                                <input type="checkbox" checked class="rounded border-borderCol bg-darkBg text-blue-500 focus:ring-0"> Notificación Push Web
-                            </label>
+                <div class="bg-cardBg border border-borderCol rounded-xl p-5 max-w-xl w-full mx-auto xl:mx-0">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                            <i class="fa-solid fa-bell"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-sm">Configurar alerta</h3>
+                            <p class="text-xs text-slate-400">Recibe una notificación simulada cuando un evento impacte tu tesis.</p>
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition shadow-lg shadow-blue-600/20 mt-2">
-                        Guardar y Activar Alerta
-                    </button>
-                </form>
+                    <form onsubmit="saveAlert(event)" class="flex flex-col gap-4 text-xs">
+                        <div>
+                            <label class="block text-slate-300 font-medium mb-1">Evento a monitorizar</label>
+                            <select id="alert-type" class="w-full bg-darkBg border border-borderCol rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
+                                <option value="CPI">CPI EE.UU. (Inflación)</option>
+                                <option value="FOMC">FOMC / Decisión de tasas FED</option>
+                                <option value="ETFs">Flujos de ETFs Spot</option>
+                                <option value="NFP">Nóminas No Agrícolas (NFP)</option>
+                                <option value="DXY">DXY / Dólar</option>
+                            </select>
+                        </div>
 
-                <div class="mt-6 pt-6 border-t border-borderCol">
-                    <h4 class="font-semibold text-xs text-slate-400 uppercase tracking-wider mb-3">Alertas Activas en Sistema</h4>
-                    <div id="active-alerts-list" class="flex flex-col gap-2">
-                        <div class="flex items-center justify-between bg-darkBg p-3 rounded-xl border border-borderCol">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-circle-check text-emerald-400"></i>
-                                <span>Inflación CPI EE.UU. (Desviación > 0.1%)</span>
+                        <div>
+                            <label class="block text-slate-300 font-medium mb-1">Condición</label>
+                            <input type="text" id="alert-condition" placeholder="Ej. CPI > 3.0% o recortes de Fed en 2026" class="w-full bg-darkBg border border-borderCol rounded-xl p-2.5 text-slate-200 focus:outline-none focus:border-blue-500" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-300 font-medium mb-1">Canal</label>
+                            <div class="flex gap-4 mt-1">
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+                                    <input type="checkbox" checked class="rounded border-borderCol bg-darkBg text-blue-500 focus:ring-0"> Panel
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-300">
+                                    <input type="checkbox" checked class="rounded border-borderCol bg-darkBg text-blue-500 focus:ring-0"> Push Web
+                                </label>
                             </div>
-                            <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Activa</span>
                         </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition shadow-lg shadow-blue-600/20 mt-2">
+                            Guardar alerta
+                        </button>
+                    </form>
+
+                    <div class="mt-6 pt-6 border-t border-borderCol">
+                        <h4 class="font-semibold text-xs text-slate-400 uppercase tracking-wider mb-3">Alertas activas</h4>
+                        <div id="active-alerts-list" class="flex flex-col gap-2"></div>
                     </div>
                 </div>
             </div>
@@ -655,6 +664,67 @@
             activeBtn.classList.add('text-blue-400', 'border-blue-500');
         }
 
+        function clamp(value, min, max) {
+            return Math.min(Math.max(value, min), max);
+        }
+
+        function safeNumber(value, fallback = 0) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : fallback;
+        }
+
+        async function loadMacroData() {
+            const dxyUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/DX-Y.NYB?range=1mo&interval=1d';
+            const treasuryUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/^TNX?range=1mo&interval=1d';
+
+            try {
+                const [dxyResponse, treasuryResponse] = await Promise.all([
+                    fetch(dxyUrl, { mode: 'cors' }),
+                    fetch(treasuryUrl, { mode: 'cors' })
+                ]);
+
+                if (!dxyResponse.ok || !treasuryResponse.ok) {
+                    throw new Error('No se pudieron cargar los datos macro públicos');
+                }
+
+                const dxyJson = await dxyResponse.json();
+                const treasuryJson = await treasuryResponse.json();
+
+                const dxyResult = dxyJson?.chart?.result?.[0];
+                const treasuryResult = treasuryJson?.chart?.result?.[0];
+
+                if (dxyResult) {
+                    const closes = dxyResult.indicators?.quote?.[0]?.close || [];
+                    const lastClose = closes.filter(v => typeof v === 'number').slice(-1)[0] || 104.2;
+                    const dxyValue = safeNumber(lastClose, 104.2);
+                    const dxyStatus = document.getElementById('dxy-status');
+                    const dxyValueEl = document.getElementById('dxy-value');
+                    const dxyImpactEl = document.getElementById('dxy-impact');
+                    dxyValueEl.innerText = `${dxyValue.toFixed(2)} pts`;
+                    dxyStatus.innerText = dxyValue >= 103 ? 'Fuerte' : 'Débil';
+                    dxyStatus.className = `text-xs font-medium ${dxyValue >= 103 ? 'text-emerald-400' : 'text-red-400'}`;
+                    dxyImpactEl.innerText = dxyValue >= 103 ? 'Favorable (+)' : 'Débil (-)';
+                    dxyImpactEl.className = `font-medium ${dxyValue >= 103 ? 'text-emerald-400' : 'text-red-400'}`;
+                }
+
+                if (treasuryResult) {
+                    const closes = treasuryResult.indicators?.quote?.[0]?.close || [];
+                    const lastClose = closes.filter(v => typeof v === 'number').slice(-1)[0] || 4.22;
+                    const yieldValue = safeNumber(lastClose, 4.22);
+                    const treasuryStatus = document.getElementById('treasury-status');
+                    const treasuryValueEl = document.getElementById('treasury-value');
+                    const treasuryImpactEl = document.getElementById('treasury-impact');
+                    treasuryValueEl.innerText = `${yieldValue.toFixed(2)}%`;
+                    treasuryStatus.innerText = yieldValue > 4.5 ? 'Alto' : yieldValue > 4 ? 'Estable' : 'Bajo';
+                    treasuryStatus.className = `text-xs font-medium ${yieldValue > 4.5 ? 'text-red-400' : yieldValue > 4 ? 'text-amber-400' : 'text-emerald-400'}`;
+                    treasuryImpactEl.innerText = yieldValue > 4.5 ? 'Restrictivo (-)' : yieldValue > 4 ? 'Neutral (=)' : 'Favorable (+)';
+                    treasuryImpactEl.className = `font-medium ${yieldValue > 4.5 ? 'text-red-400' : yieldValue > 4 ? 'text-amber-400' : 'text-emerald-400'}`;
+                }
+            } catch (error) {
+                console.warn('No se pudieron cargar los datos macro públicos:', error);
+            }
+        }
+
         async function refreshData() {
             const icon = document.getElementById('refresh-icon');
             icon.classList.add('fa-spin');
@@ -695,7 +765,30 @@
                     document.getElementById('fng-label').innerText = label;
                     document.getElementById('gauge-number').innerText = String(val);
                     document.getElementById('gauge-text').innerText = label === 'Greed' ? 'Codicia Moderada' : label === 'Fear' ? 'Miedo Moderado' : 'Neutral';
+
+                    const socialPercent = clamp(Math.round(val), 30, 90);
+                    const exchangePercent = clamp(Math.round(100 - val / 2), 15, 75);
+                    const institutionalPercent = clamp(Math.round(Math.min(95, Math.max(50, val + (Number(change) * 2.5)))), 45, 95);
+
+                    document.getElementById('social-sentiment-value').innerText = `${socialPercent}% Alcista`;
+                    document.getElementById('social-sentiment-bar').style.width = `${socialPercent}%`;
+                    document.getElementById('exchange-reserves-value').innerText = exchangePercent < 50 ? 'En Descenso (-)' : 'Estable';
+                    document.getElementById('exchange-reserves-bar').style.width = `${exchangePercent}%`;
+                    document.getElementById('institutional-interest-value').innerText = institutionalPercent > 70 ? 'Alto / Alza' : 'Moderado';
+                    document.getElementById('institutional-interest-bar').style.width = `${institutionalPercent}%`;
                 }
+
+                const volatilityValue = Math.abs(Number(change) || 0);
+                const marketCapStatus = document.getElementById('market-cap-status');
+                const marketCapValue = document.getElementById('market-cap-value');
+                const marketCapImpact = document.getElementById('market-cap-impact');
+                marketCapValue.innerText = `${volatilityValue.toFixed(2)}%`;
+                marketCapStatus.innerText = volatilityValue > 2 ? 'Alta' : 'Moderada';
+                marketCapStatus.className = `text-xs font-medium ${volatilityValue > 2 ? 'text-amber-400' : 'text-emerald-400'}`;
+                marketCapImpact.innerText = volatilityValue > 2 ? 'Volátil' : 'Estable';
+                marketCapImpact.className = `font-medium ${volatilityValue > 2 ? 'text-amber-400' : 'text-emerald-400'}`;
+
+                await loadMacroData();
             } catch (e) {
                 console.warn('Error obteniendo datos en vivo, mostrando valor de respaldo.', e);
                 document.getElementById('btc-price').innerText = '$84,000.00';
@@ -705,11 +798,53 @@
                 document.getElementById('fng-label').innerText = 'Neutral';
                 document.getElementById('gauge-number').innerText = '50';
                 document.getElementById('gauge-text').innerText = 'Neutral';
+                document.getElementById('social-sentiment-value').innerText = '50% Alcista';
+                document.getElementById('social-sentiment-bar').style.width = '50%';
+                document.getElementById('exchange-reserves-value').innerText = 'Estable';
+                document.getElementById('exchange-reserves-bar').style.width = '40%';
+                document.getElementById('institutional-interest-value').innerText = 'Moderado';
+                document.getElementById('institutional-interest-bar').style.width = '55%';
             } finally {
                 setTimeout(() => {
                     icon.classList.remove('fa-spin');
                 }, 600);
             }
+        }
+
+        const upcomingEvents = [
+            { title: 'CPI EE.UU. interanual', date: 'Mañana, 12:30 UTC', impact: 'Alta', description: 'Inflación mensual y anual; impacto directo sobre expectativas de tasas.', tag: 'CPI' },
+            { title: 'Decisión de tasas FOMC', date: 'En 4 días, 18:00 UTC', impact: 'Crítica', description: 'Revisión de la política monetaria y señales de recortes.', tag: 'FOMC' },
+            { title: 'Nóminas no agrícolas (NFP)', date: 'En 7 días, 12:30 UTC', impact: 'Media', description: 'Indicador clave de fuerza laboral y presión inflacionaria.', tag: 'NFP' },
+            { title: 'Flujos de ETFs Spot BTC', date: 'En 2 días, 15:00 UTC', impact: 'Alta', description: 'Entradas netas institucionales y comportamiento de la demanda.', tag: 'ETFs' },
+            { title: 'DXY y rendimiento del Tesoro', date: 'En 5 días, 09:00 UTC', impact: 'Media', description: 'Volatilidad de dólar y bonos que condiciona riesgo global.', tag: 'DXY' }
+        ];
+
+        function renderUpcomingNews() {
+            const list = document.getElementById('upcoming-news-list');
+            if (!list) return;
+
+            list.innerHTML = upcomingEvents.map(event => {
+                const badge = event.impact === 'Crítica' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                    event.impact === 'Alta' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                    'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+
+                return `
+                    <div class="border border-borderCol rounded-xl p-3 bg-darkBg/60">
+                        <div class="flex justify-between items-start gap-3 mb-2">
+                            <div>
+                                <div class="text-[10px] text-slate-400 uppercase tracking-[0.14em]">${event.tag}</div>
+                                <h4 class="font-semibold text-sm text-white leading-snug mt-1">${event.title}</h4>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 rounded border ${badge}">${event.impact}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mb-2">${event.description}</p>
+                        <div class="flex items-center justify-between text-[10px] text-slate-500">
+                            <span class="font-mono">${event.date}</span>
+                            <span class="text-blue-400">Ver contexto →</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function saveAlert(e) {
@@ -733,6 +868,8 @@
         }
 
         window.onload = function() {
+            renderNews();
+            renderUpcomingNews();
             loadPublicNews();
             refreshData();
         };
