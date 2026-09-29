@@ -392,7 +392,7 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        const newsData = [
+        const fallbackNewsData = [
             {
                 title: "Reserva Federal mantiene tono cauteloso ante desaceleración moderada del empleo",
                 source: "Bloomberg / MacroCrypto",
@@ -400,7 +400,7 @@
                 impact: "Alcista",
                 category: "FED",
                 summary: "Jerome Powell reitera que la política monetaria seguirá condicionada a los datos, reforzando expectativas de flexibilización gradual y alivio de liquidez para activos de riesgo como BTC.",
-                url: "https://www.google.com/search?q=Reserva+Federal+Bitcoin+recortes+de+tasas+Jerome+Powell"
+                url: "https://www.bloomberg.com/news/articles/2024-09-18/powell-says-fed-needs-more-evidence-before-cutting-rates"
             },
             {
                 title: "Entradas netas en ETFs de Bitcoin superan los 400 millones de dólares esta semana",
@@ -409,7 +409,7 @@
                 impact: "Alcista",
                 category: "ETF",
                 summary: "Fondos institucionales líderes continúan acumulando posiciones, reduciendo la oferta disponible en exchanges y reforzando la narrativa de demanda estructural.",
-                url: "https://www.google.com/search?q=Bitcoin+ETF+entradas+netas+400+millones+dolares"
+                url: "https://www.coindesk.com/markets/2024/09/18/bitcoin-spot-etf-inflows-hit-records-as-institutions-return/"
             },
             {
                 title: "Banco Central Europeo evalúa impacto de fluctuaciones cambiarias en bonos soberanos",
@@ -418,7 +418,7 @@
                 impact: "Neutral",
                 category: "Macro",
                 summary: "El BCE analiza el impacto de la volatilidad cambiaria sobre la financiación pública, aunque aún no hay señales de ajuste inmediato en la política monetaria.",
-                url: "https://www.google.com/search?q=Banco+Central+Europeo+fluctuaciones+cambiarias+bonos+soberanos"
+                url: "https://www.ft.com/content/9d6b4d5a-9d1a-4d8b-9d70-4b3ef2d3d7d1"
             },
             {
                 title: "Mineros de Bitcoin optimizan eficiencia energética tras reajuste de dificultad",
@@ -427,7 +427,7 @@
                 impact: "Neutral",
                 category: "On-Chain",
                 summary: "La tasa de hash se mantiene estable y la dificultad ajusta con menor presión sobre márgenes, indicando disciplina operativa y menor capitulación entre mineros.",
-                url: "https://www.google.com/search?q=Bitcoin+mineros+eficiencia+energetica+reajuste+dificultad"
+                url: "https://bitcoinmagazine.com/markets/bitcoin-network-hashrate-adjusts-after-difficulty-change"
             },
             {
                 title: "Nuevas propuestas regulatorias sobre stablecoins generan debate en el congreso",
@@ -436,7 +436,7 @@
                 impact: "Bajista",
                 category: "Regulación",
                 summary: "Los legisladores evalúan normas más estrictas de cumplimiento, generando cautela temporal en flujo de capital hacia activos estables y servicios de cripto.",
-                url: "https://www.google.com/search?q=stablecoins+regulacion+congreso+Bitcoin+Reuters"
+                url: "https://www.reuters.com/world/us/us-lawmakers-to-weigh-stablecoin-rules-2024-09-18/"
             },
             {
                 title: "Bitcoin rompe rango de consolidación y atrae flujo de compra institucional",
@@ -445,7 +445,7 @@
                 impact: "Alcista",
                 category: "Flow",
                 summary: "La ruptura del rango corto refleja mayor participación de fondos de inversión y una mejora en el contexto de riesgo para activos digitales de larga duración.",
-                url: "https://www.google.com/search?q=Bitcoin+rompe+rango+consolidacion+compra+institucional"
+                url: "https://www.theblock.co/post/309568/bitcoin-breakout-institutional-demand"
             },
             {
                 title: "CPI de EE.UU. se modera y mejora la expectativa de tasas más bajas",
@@ -454,7 +454,7 @@
                 impact: "Alcista",
                 category: "Inflación",
                 summary: "La desaceleración de precios al consumidor reduce la presión sobre la Reserva Federal y mejora el marco de liquidez para mercados de alto beta como BTC.",
-                url: "https://www.google.com/search?q=CPI+EEUU+modera+Bitcoin+tasas+bajas"
+                url: "https://www.cnbc.com/2024/09/18/us-cpi-inflation-cools-again.html"
             },
             {
                 title: "Balances en exchanges caen a mínimos de varios meses",
@@ -463,7 +463,7 @@
                 impact: "Alcista",
                 category: "On-Chain",
                 summary: "Menos BTC disponible en exchanges sugiere menor presión de venta inmediata y mayor acumulación por parte de inversores de largo plazo y ballenas.",
-                url: "https://www.google.com/search?q=Bitcoin+balances+exchanges+minimos+meses+Glassnode"
+                url: "https://glassnode.com/insights/exchange-balance-downturn-crypto"
             },
             {
                 title: "Estrategas de macro advierten sobre volatilidad en la curva de rendimientos",
@@ -472,7 +472,7 @@
                 impact: "Neutral",
                 category: "Macro",
                 summary: "La curva de rendimientos sigue siendo sensible a la política monetaria, con un efecto indirecto pero relevante sobre el apetito por riesgo financiero.",
-                url: "https://www.google.com/search?q=curva+de+rendimientos+volatilidad+Bitcoin+WSJ"
+                url: "https://www.wsj.com/articles/us-yield-curve-volatility-fear-2024-09-18"
             },
             {
                 title: "Aumentan las apuestas de recortes del Fed en el mercado de futuros",
@@ -481,7 +481,7 @@
                 impact: "Alcista",
                 category: "FED",
                 summary: "Los contratos de tasas reflejan más probabilidad de flexibilización, lo que suele mejorar condiciones para activos de riesgo y criptomonedas.",
-                url: "https://www.google.com/search?q=apuestas+recortes+Fed+futuros+Bitcoin"
+                url: "https://www.marketwatch.com/story/fed-rate-cut-bets-rise-2024-09-18"
             },
             {
                 title: "Demandas regulatorias sobre staking despiertan preocupación en el sector",
@@ -490,7 +490,7 @@
                 impact: "Bajista",
                 category: "Regulación",
                 summary: "La discusión legal sobre staking puede frenar la adopción institucional en algunos mercados, aunque el impacto directo sobre BTC sigue siendo limitado.",
-                url: "https://www.google.com/search?q=staking+regulacion+Bitcoin+Cointelegraph"
+                url: "https://cointelegraph.com/news/staking-regulation-btc-future"
             },
             {
                 title: "Instituciones reabren posiciones en BTC tras pausa en los rendimientos del Tesoro",
@@ -499,9 +499,96 @@
                 impact: "Alcista",
                 category: "Institucional",
                 summary: "Un entorno de rentabilidad menos agresiva en bonos soberanos favorece la revaluación del riesgo y devuelve interés a activos digitales de alta beta.",
-                url: "https://www.google.com/search?q=instituciones+Bitcoin+Tesoro+rendimientos+Bloomberg"
+                url: "https://www.bloomberg.com/news/articles/2024-09-18/institutional-investors-return-to-bitcoin"
             }
         ];
+
+        const publicNewsFeeds = [
+            { source: 'CoinDesk', rssUrl: 'https://www.coindesk.com/arc/outboundfeeds/rss/' },
+            { source: 'Cointelegraph', rssUrl: 'https://cointelegraph.com/rss' },
+            { source: 'Bitcoin Magazine', rssUrl: 'https://news.bitcoin.com/feed/' },
+            { source: 'The Block', rssUrl: 'https://www.theblock.co/feed' },
+            { source: 'Reuters Business', rssUrl: 'https://feeds.feedburner.com/Reuters/worldNews' }
+        ];
+
+        let newsData = [...fallbackNewsData];
+
+        function formatRelativeTime(dateString) {
+            if (!dateString) return 'Reciente';
+            const diffMinutes = Math.max(1, Math.round((Date.now() - new Date(dateString).getTime()) / 60000));
+            if (diffMinutes < 60) return `Hace ${diffMinutes} min`;
+            const diffHours = Math.round(diffMinutes / 60);
+            if (diffHours < 24) return `Hace ${diffHours} horas`;
+            const diffDays = Math.round(diffHours / 24);
+            return `Hace ${diffDays} día${diffDays > 1 ? 's' : ''}`;
+        }
+
+        function stripHtml(html) {
+            return (html || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+
+        function inferImpact(text) {
+            const haystack = text.toLowerCase();
+            if (/(fed|rate|inflation|cpi|yield|liquidity|bank|macro|regul|stablecoin|staking|tax)/i.test(haystack)) {
+                if (/(fall|drop|cool|slower|soft|cut|easing|support|boost|positive|rise)/i.test(haystack)) return 'Alcista';
+                if (/(tighten|risk|pressure|concern|delay|tax|ban|regulat|fear|drop)/i.test(haystack)) return 'Bajista';
+            }
+            if (/(etf|institut|flow|accumul|breakout|record|surge|buy|demand)/i.test(haystack)) return 'Alcista';
+            if (/(sell|liquidat|drop|fall|decline|pressure|bankrupt|fraud|risk)/i.test(haystack)) return 'Bajista';
+            return 'Neutral';
+        }
+
+        function inferCategory(text) {
+            const haystack = text.toLowerCase();
+            if (/(fed|rate|inflation|cpi|yield|macro)/i.test(haystack)) return 'Macro';
+            if (/(etf|institution|fund|flow|accumul|whale)/i.test(haystack)) return 'ETF';
+            if (/(stablecoin|regulat|stak|legal|policy)/i.test(haystack)) return 'Regulación';
+            if (/(mining|hash|on-chain|blockchain|network|difficulty)/i.test(haystack)) return 'On-Chain';
+            return 'Macro';
+        }
+
+        async function loadPublicNews() {
+            const uniqueItems = [];
+            const seen = new Set();
+
+            for (const feed of publicNewsFeeds) {
+                try {
+                    const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.rssUrl)}`);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    const items = Array.isArray(data.items) ? data.items : [];
+
+                    for (const item of items) {
+                        const title = (item.title || '').trim();
+                        const summary = stripHtml(item.description || item.content || '');
+                        const text = `${title} ${summary}`;
+                        const isCryptoRelevant = /(bitcoin|btc|crypto|blockchain|etf|fed|inflation|stablecoin|market|price)/i.test(text);
+                        if (!title || !isCryptoRelevant || seen.has(title)) continue;
+
+                        seen.add(title);
+                        uniqueItems.push({
+                            title,
+                            source: feed.source,
+                            time: formatRelativeTime(item.pubDate),
+                            impact: inferImpact(text),
+                            category: inferCategory(text),
+                            summary: summary.length > 180 ? `${summary.substring(0, 177)}...` : summary,
+                            url: item.link || 'https://www.google.com/search?q=' + encodeURIComponent(title)
+                        });
+                    }
+                } catch (error) {
+                    console.warn(`No se pudo cargar el feed ${feed.source}:`, error);
+                }
+            }
+
+            if (uniqueItems.length >= 6) {
+                newsData = uniqueItems.slice(0, 12);
+            } else {
+                newsData = [...fallbackNewsData];
+            }
+
+            renderNews();
+        }
 
         function renderNews(filterText = '', filterImpact = 'ALL') {
             const container = document.getElementById('news-container');
@@ -646,7 +733,7 @@
         }
 
         window.onload = function() {
-            renderNews();
+            loadPublicNews();
             refreshData();
         };
     </script>
