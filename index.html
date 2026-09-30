@@ -66,6 +66,38 @@
         ::-webkit-scrollbar-track { background: #0b0e14; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+        .trend-card-scene {
+            perspective: 1000px;
+            min-height: 188px;
+        }
+
+        .trend-card-inner {
+            position: relative;
+            min-height: 188px;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.55s ease;
+        }
+
+        .trend-card-scene.is-flipped .trend-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .trend-card-face {
+            position: absolute;
+            inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .trend-card-back {
+            transform: rotateY(180deg);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .trend-card-inner { transition: none; }
+        }
     </style>
 </head>
 <body class="bg-darkBg text-slate-100 min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
@@ -916,6 +948,25 @@
             }
         ];
 
+        const trendCoinSummaries = {
+            BTC: 'Bitcoin es dinero digital descentralizado. Permite transferir valor entre personas sin intermediarios y su emisión está limitada por el protocolo.',
+            ETH: 'Ethereum es una plataforma para contratos inteligentes y aplicaciones descentralizadas. ETH se usa para pagar operaciones y asegurar la red.',
+            SOL: 'Solana es una blockchain de alto rendimiento para aplicaciones, pagos y activos digitales, con comisiones bajas y confirmaciones rápidas.',
+            XRP: 'XRP facilita pagos y liquidaciones internacionales rápidos. El token se utiliza dentro del ecosistema de pagos de XRP Ledger.',
+            QNT: 'Quant conecta distintas blockchains y redes empresariales mediante Overledger, una capa de interoperabilidad. QNT se utiliza para acceder a sus servicios.',
+            DOGE: 'Dogecoin es una criptomoneda de pagos entre pares, conocida por sus transferencias sencillas y una comunidad amplia.',
+            BNB: 'BNB es el activo del ecosistema BNB Chain. Se usa para pagar comisiones y participar en aplicaciones descentralizadas.',
+            ADA: 'Cardano es una blockchain de contratos inteligentes enfocada en aplicaciones descentralizadas y gobernanza de la red.',
+            LINK: 'Chainlink conecta contratos inteligentes con datos y servicios externos mediante redes de oráculos descentralizadas.',
+            AVAX: 'Avalanche permite crear aplicaciones y redes blockchain personalizadas, con finalidad rápida y compatibilidad con contratos inteligentes.',
+            DOT: 'Polkadot conecta distintas blockchains para que compartan datos y seguridad dentro de una red interoperable.',
+            TON: 'The Open Network es una blockchain diseñada para aplicaciones y pagos digitales, integrada con el ecosistema de Telegram.',
+            TRX: 'TRON es una blockchain para aplicaciones descentralizadas y transferencias de activos, con uso extendido en pagos con stablecoins.',
+            LTC: 'Litecoin es una criptomoneda de pagos entre pares, diseñada para transferencias rápidas y de bajo costo.',
+            SHIB: 'Shiba Inu es un token comunitario con un ecosistema de aplicaciones que incluye intercambio descentralizado y proyectos Web3.',
+            SUI: 'Sui es una blockchain de capa 1 para aplicaciones y activos digitales, diseñada para procesar transacciones con baja latencia.'
+        };
+
         function renderTrendCoins(coins) {
             const grid = document.getElementById('trend-coins-grid');
             if (!grid) return;
@@ -928,24 +979,55 @@
                 const label = delta > 5 ? 'Breakout' : delta > 2 ? 'Tendencia' : 'Estable';
 
                 const tvSymbol = coin.symbol === 'BTC' ? 'BTCUSD' : coin.symbol === 'ETH' ? 'ETHUSD' : coin.symbol === 'SOL' ? 'SOLUSD' : coin.symbol === 'XRP' ? 'XRPUSD' : coin.symbol === 'DOGE' ? 'DOGEUSD' : `${coin.symbol}USD`;
+                const summary = trendCoinSummaries[coin.symbol] || 'Criptoactivo de la red ' + coin.name + '. Su utilidad depende del proyecto y de las aplicaciones de su ecosistema; revisa sus fundamentos antes de operar.';
+                const tradingViewLink = `https://www.tradingview.com/symbols/${tvSymbol}/`;
                 return `
-                    <div class="bg-darkBg border border-borderCol rounded-xl p-3">
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <div class="text-[10px] uppercase tracking-[0.12em] text-slate-500">${coin.symbol}</div>
-                                <div class="font-semibold text-sm mt-1">${coin.name}</div>
+                    <article class="trend-card-scene" onclick="toggleTrendCard(this, event)" onkeydown="handleTrendCardKey(event, this)" onmouseenter="this.classList.add('is-flipped')" onmouseleave="this.classList.remove('is-flipped')" tabindex="0" role="button" aria-label="Ver para qué sirve ${coin.name}" aria-pressed="false">
+                        <div class="trend-card-inner">
+                            <div class="trend-card-face bg-darkBg border border-borderCol rounded-xl p-3 flex flex-col">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div>
+                                        <div class="text-[10px] uppercase tracking-[0.12em] text-slate-500">${coin.symbol}</div>
+                                        <div class="font-semibold text-sm mt-1">${coin.name}</div>
+                                    </div>
+                                    <span class="text-[10px] px-2 py-0.5 rounded border ${statusClass}">${label}</span>
+                                </div>
+                                <div class="text-lg font-bold text-white">${coin.price}</div>
+                                <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400">
+                                    <span>24h</span>
+                                    <span class="font-semibold ${Number(String(coin.change || '0').replace('%','').replace('+','').replace('-','')) >= 0 ? 'text-emerald-400' : 'text-red-400'}">${coin.change}</span>
+                                </div>
+                                <div class="mt-auto pt-3 flex items-center justify-between gap-2 text-[10px]">
+                                    <a href="${tradingViewLink}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="text-blue-400 hover:text-blue-300 font-medium underline-offset-2 hover:underline">Abrir TradingView ↗</a>
+                                    <span class="text-slate-500">Ver utilidad ↻</span>
+                                </div>
                             </div>
-                            <span class="text-[10px] px-2 py-0.5 rounded border ${statusClass}">${label}</span>
+                            <div class="trend-card-face trend-card-back bg-darkBg border border-cyan-500/30 rounded-xl p-3 flex flex-col">
+                                <div class="text-[10px] uppercase tracking-[0.12em] text-cyan-400">${coin.symbol} · ¿Para qué sirve?</div>
+                                <p class="text-[11px] text-slate-200 leading-relaxed mt-2">${summary}</p>
+                                <div class="mt-auto pt-3 flex items-center justify-between gap-2 text-[10px]">
+                                    <a href="${tradingViewLink}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="text-blue-400 hover:text-blue-300 font-medium underline-offset-2 hover:underline">Abrir TradingView ↗</a>
+                                    <span class="text-slate-500">Volver ↻</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-lg font-bold text-white">${coin.price}</div>
-                        <div class="mt-2 flex items-center justify-between text-[11px] text-slate-400">
-                            <span>24h</span>
-                            <span class="font-semibold ${Number(String(coin.change || '0').replace('%','').replace('+','').replace('-','')) >= 0 ? 'text-emerald-400' : 'text-red-400'}">${coin.change}</span>
-                        </div>
-                        <a href="https://www.tradingview.com/symbols/${tvSymbol}/" target="_blank" rel="noopener noreferrer" class="mt-3 block text-[10px] text-blue-400 hover:text-blue-300 font-medium underline-offset-2 hover:underline">Abrir TradingView ↗</a>
-                    </div>
+                    </article>
                 `;
             }).join('');
+        }
+
+        function toggleTrendCard(card, event) {
+            if (event.target.closest('a')) return;
+            if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && event.detail !== 0) return;
+            const isFlipped = card.classList.toggle('is-flipped');
+            card.setAttribute('aria-pressed', String(isFlipped));
+        }
+
+        function handleTrendCardKey(event, card) {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            const isFlipped = card.classList.toggle('is-flipped');
+            card.setAttribute('aria-pressed', String(isFlipped));
         }
 
         function renderOpportunityCards(items) {
