@@ -95,14 +95,37 @@
             transform: rotateY(180deg);
         }
 
+        .metric-ticker-content {
+            transition: opacity 0.18s ease;
+        }
+
+        .metric-ticker-content.is-changing {
+            opacity: 0;
+        }
+
+        .metric-ticker {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+
+        .metric-ticker.is-visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
         @media (prefers-reduced-motion: reduce) {
-            .trend-card-inner { transition: none; }
+            .trend-card-inner,
+            .metric-ticker-content,
+            .metric-ticker { transition: none; }
         }
     </style>
 </head>
 <body class="bg-darkBg text-slate-100 min-h-screen flex flex-col selection:bg-blue-500 selection:text-white">
 
-    <header class="bg-cardBg border-b border-borderCol px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 sticky top-0 z-50">
+    <header class="bg-cardBg border-b border-borderCol px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
                 <i class="fa-brands fa-bitcoin text-2xl text-white"></i>
@@ -130,60 +153,85 @@
         </div>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
-
-        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
-                    <span>Precio BTC / USD</span>
-                    <i class="fa-solid fa-chart-line text-blue-400"></i>
-                </div>
-                <div class="my-2 flex items-baseline gap-2">
-                    <span class="text-2xl font-bold tracking-tight text-white" id="btc-price">$ --</span>
-                    <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded" id="btc-change">+--%</span>
-                </div>
-                <div class="flex items-center justify-between gap-2 mt-1">
-                    <div class="text-[11px] text-slate-400">Actualizado hace un instante</div>
-                    <a href="https://www.tradingview.com/symbols/BTCUSD/" target="_blank" rel="noopener noreferrer" class="text-[10px] text-blue-400 hover:text-blue-300 font-medium underline-offset-2 hover:underline">Ver gráfico ↗</a>
-                </div>
+    <div id="metric-ticker" class="metric-ticker fixed top-0 left-0 right-0 z-50 border-b border-borderCol bg-slate-950/95 backdrop-blur-sm" aria-hidden="true" inert>
+        <div class="max-w-7xl mx-auto min-h-12 px-4 md:px-6 flex items-center gap-3">
+            <span class="shrink-0 text-[10px] uppercase tracking-wider text-slate-500 hidden sm:block">Mercado</span>
+            <div id="metric-ticker-content" class="metric-ticker-content min-w-0 flex-1 flex items-center gap-2 sm:gap-3" aria-live="off">
+                <i id="ticker-icon" class="fa-solid fa-chart-line text-blue-400 text-xs shrink-0"></i>
+                <span id="ticker-label" class="text-[11px] text-slate-400 truncate">Precio BTC / USD</span>
+                <strong id="ticker-value" class="text-sm text-white whitespace-nowrap">$ --</strong>
+                <span id="ticker-status" class="text-[10px] font-semibold text-emerald-400 whitespace-nowrap">+--%</span>
+                <span id="ticker-detail" class="hidden md:inline text-[10px] text-slate-500 truncate">Actualizado en vivo</span>
+                <a id="ticker-link" href="https://www.tradingview.com/symbols/BTCUSD/" target="_blank" rel="noopener noreferrer" class="hidden sm:inline text-[10px] text-blue-400 hover:text-blue-300 whitespace-nowrap">Gráfico ↗</a>
             </div>
-
-            <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
-                    <span>Crypto Fear & Greed</span>
-                    <i class="fa-solid fa-face-smile text-amber-400"></i>
-                </div>
-                <div class="my-2 flex items-baseline gap-2">
-                    <span class="text-2xl font-bold tracking-tight text-white" id="fng-val">--</span>
-                    <span class="text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20" id="fng-label">Cargando...</span>
-                </div>
-                <div class="text-[11px] text-slate-400">Sentimiento general de mercado</div>
-            </div>
-
-            <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
-                    <span>Tasa de Interés FED</span>
-                    <i class="fa-solid fa-landmark text-purple-400"></i>
-                </div>
-                <div class="my-2 flex items-baseline gap-2">
-                    <span class="text-2xl font-bold tracking-tight text-white">5.25% - 5.50%</span>
-                    <span class="text-xs font-semibold text-slate-400">Neutral/Pausa</span>
-                </div>
-                <div class="text-[11px] text-slate-400">Próxima reunión: 2 semanas</div>
-            </div>
-
-            <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
-                <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
-                    <span>Inflación EE.UU. (CPI)</span>
-                    <i class="fa-solid fa-percent text-red-400"></i>
-                </div>
-                <div class="my-2 flex items-baseline gap-2">
-                    <span class="text-2xl font-bold tracking-tight text-white">2.9%</span>
-                    <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Bajista MoM</span>
-                </div>
-                <div class="text-[11px] text-slate-400">Dato interanual más reciente</div>
+            <div class="flex items-center gap-1 shrink-0">
+                <button type="button" onclick="stepMetricTicker(-1)" aria-label="Indicador anterior" title="Indicador anterior" class="w-7 h-7 flex items-center justify-center rounded text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                </button>
+                <button type="button" id="ticker-pause" onclick="toggleMetricTicker()" aria-label="Pausar rotación" title="Pausar rotación" class="w-7 h-7 flex items-center justify-center rounded text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-pause text-[10px]"></i>
+                </button>
+                <button type="button" onclick="stepMetricTicker(1)" aria-label="Siguiente indicador" title="Siguiente indicador" class="w-7 h-7 flex items-center justify-center rounded text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                </button>
             </div>
         </div>
+    </div>
+
+    <div id="metric-cards" class="max-w-7xl w-full mx-auto px-4 md:px-6 pt-4 md:pt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
+            <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                <span>Precio BTC / USD</span>
+                <i class="fa-solid fa-chart-line text-blue-400"></i>
+            </div>
+            <div class="my-2 flex items-baseline gap-2">
+                <span class="text-2xl font-bold tracking-tight text-white" id="btc-price">$ --</span>
+                <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded" id="btc-change">+--%</span>
+            </div>
+            <div class="flex items-center justify-between gap-2 mt-1">
+                <div class="text-[11px] text-slate-400">Actualizado hace un instante</div>
+                <a href="https://www.tradingview.com/symbols/BTCUSD/" target="_blank" rel="noopener noreferrer" class="text-[10px] text-blue-400 hover:text-blue-300 font-medium underline-offset-2 hover:underline">Ver gráfico ↗</a>
+            </div>
+        </div>
+
+        <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
+            <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                <span>Crypto Fear &amp; Greed</span>
+                <i class="fa-solid fa-face-smile text-amber-400"></i>
+            </div>
+            <div class="my-2 flex items-baseline gap-2">
+                <span class="text-2xl font-bold tracking-tight text-white" id="fng-val">--</span>
+                <span class="text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20" id="fng-label">Cargando...</span>
+            </div>
+            <div class="text-[11px] text-slate-400">Sentimiento general de mercado</div>
+        </div>
+
+        <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
+            <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                <span>Tasa de Interés FED</span>
+                <i class="fa-solid fa-landmark text-violet-400"></i>
+            </div>
+            <div class="my-2 flex items-baseline gap-2">
+                <span class="text-2xl font-bold tracking-tight text-white">5.25% - 5.50%</span>
+                <span class="text-xs font-semibold text-slate-400">Neutral/Pausa</span>
+            </div>
+            <div class="text-[11px] text-slate-400">Próxima reunión: 2 semanas</div>
+        </div>
+
+        <div class="bg-cardBg border border-borderCol rounded-xl p-4 flex flex-col justify-between shadow-sm">
+            <div class="flex justify-between items-center text-slate-400 text-xs font-medium">
+                <span>Inflación EE.UU. (CPI)</span>
+                <i class="fa-solid fa-percent text-red-400"></i>
+            </div>
+            <div class="my-2 flex items-baseline gap-2">
+                <span class="text-2xl font-bold tracking-tight text-white">2.9%</span>
+                <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">Bajista MoM</span>
+            </div>
+            <div class="text-[11px] text-slate-400">Dato interanual más reciente</div>
+        </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col gap-6">
 
         <div class="bg-gradient-to-r from-blue-950/40 via-cardBg to-indigo-950/40 border border-blue-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
             <div class="absolute right-0 top-0 translate-x-4 -translate-y-4 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -518,6 +566,108 @@
         }
         setInterval(updateClock, 1000);
         updateClock();
+
+        const metricTickerItems = [
+            { key: 'btc', label: 'Precio BTC / USD', value: '$ --', status: '+--%', detail: 'Actualizado en vivo', icon: 'fa-solid fa-chart-line text-blue-400 text-xs shrink-0', statusTone: 'text-emerald-400', link: 'https://www.tradingview.com/symbols/BTCUSD/', linkLabel: 'Gráfico ↗' },
+            { key: 'fng', label: 'Crypto Fear & Greed', value: '--', status: 'Cargando...', detail: 'Sentimiento general de mercado', icon: 'fa-solid fa-face-smile text-amber-400 text-xs shrink-0', statusTone: 'text-amber-400' },
+            { key: 'fed', label: 'Tasa de Interés FED', value: '5.25% - 5.50%', status: 'Neutral/Pausa', detail: 'Próxima reunión: 2 semanas', icon: 'fa-solid fa-landmark text-violet-400 text-xs shrink-0', statusTone: 'text-slate-400' },
+            { key: 'cpi', label: 'Inflación EE.UU. (CPI)', value: '2.9%', status: 'Bajista MoM', detail: 'Dato interanual más reciente', icon: 'fa-solid fa-percent text-red-400 text-xs shrink-0', statusTone: 'text-emerald-400' }
+        ];
+        let metricTickerIndex = 0;
+        let metricTickerInterval = null;
+        let metricTickerPaused = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let metricTickerRenderTimeout = null;
+
+        function renderMetricTicker(animate = true) {
+            const content = document.getElementById('metric-ticker-content');
+            const item = metricTickerItems[metricTickerIndex];
+            if (!content || !item) return;
+
+            clearTimeout(metricTickerRenderTimeout);
+            content.classList.toggle('is-changing', animate);
+
+            const updateContent = () => {
+                document.getElementById('ticker-icon').className = item.icon;
+                document.getElementById('ticker-label').textContent = item.label;
+                document.getElementById('ticker-value').textContent = item.value;
+                const status = document.getElementById('ticker-status');
+                status.textContent = item.status;
+                status.className = `text-[10px] font-semibold whitespace-nowrap ${item.statusTone}`;
+                document.getElementById('ticker-detail').textContent = item.detail;
+                const link = document.getElementById('ticker-link');
+                link.href = item.link || '#';
+                link.textContent = item.linkLabel || '';
+                link.classList.toggle('hidden', !item.link);
+                content.classList.remove('is-changing');
+            };
+
+            if (animate) metricTickerRenderTimeout = setTimeout(updateContent, 120);
+            else updateContent();
+        }
+
+        function updateMetricTicker(key, updates) {
+            const item = metricTickerItems.find(metric => metric.key === key);
+            if (!item) return;
+            Object.assign(item, updates);
+
+            if (key === 'btc') {
+                document.getElementById('btc-price').textContent = item.value;
+                const change = document.getElementById('btc-change');
+                change.textContent = item.status;
+                change.className = `text-xs font-semibold px-1.5 py-0.5 rounded ${item.statusTone === 'text-red-400' ? 'text-red-400 bg-red-500/10' : 'text-emerald-400 bg-emerald-500/10'}`;
+            }
+            if (key === 'fng') {
+                document.getElementById('fng-val').textContent = item.value;
+                document.getElementById('fng-label').textContent = item.status;
+            }
+
+            if (metricTickerItems[metricTickerIndex] === item) renderMetricTicker(false);
+        }
+
+        function updateMetricTickerVisibility() {
+            const cards = document.getElementById('metric-cards');
+            const ticker = document.getElementById('metric-ticker');
+            if (!cards || !ticker) return;
+
+            const isVisible = cards.getBoundingClientRect().bottom <= 0;
+            ticker.classList.toggle('is-visible', isVisible);
+            ticker.setAttribute('aria-hidden', String(!isVisible));
+            ticker.inert = !isVisible;
+        }
+
+        function stepMetricTicker(direction) {
+            metricTickerIndex = (metricTickerIndex + direction + metricTickerItems.length) % metricTickerItems.length;
+            renderMetricTicker();
+        }
+
+        function setMetricTickerPaused(paused) {
+            metricTickerPaused = paused;
+            clearInterval(metricTickerInterval);
+            metricTickerInterval = null;
+            const button = document.getElementById('ticker-pause');
+            if (button) {
+                button.setAttribute('aria-label', paused ? 'Reanudar rotación' : 'Pausar rotación');
+                button.title = paused ? 'Reanudar rotación' : 'Pausar rotación';
+                button.innerHTML = `<i class="fa-solid ${paused ? 'fa-play' : 'fa-pause'} text-[10px]"></i>`;
+            }
+            if (!paused) {
+                metricTickerInterval = setInterval(() => {
+                    if (!document.hidden) stepMetricTicker(1);
+                }, 5000);
+            }
+        }
+
+        function toggleMetricTicker() {
+            setMetricTickerPaused(!metricTickerPaused);
+        }
+
+        function initializeMetricTicker() {
+            renderMetricTicker(false);
+            setMetricTickerPaused(metricTickerPaused);
+            updateMetricTickerVisibility();
+            window.addEventListener('scroll', updateMetricTickerVisibility, { passive: true });
+            window.addEventListener('resize', updateMetricTickerVisibility);
+        }
 
         const fallbackNewsData = [
             {
@@ -1135,16 +1285,17 @@
                 const change = Number(btcData.priceChangePercent || 0);
 
                 if (price > 0) {
-                    document.getElementById('btc-price').innerText = new Intl.NumberFormat('en-US', {
+                    const formattedPrice = new Intl.NumberFormat('en-US', {
                         style: 'currency',
                         currency: 'USD',
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     }).format(price);
-
-                    const changeEl = document.getElementById('btc-change');
-                    changeEl.innerText = `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`;
-                    changeEl.className = `text-xs font-semibold px-1.5 py-0.5 rounded ${change >= 0 ? 'text-emerald-400 bg-emerald-500/10' : 'text-red-400 bg-red-500/10'}`;
+                    updateMetricTicker('btc', {
+                        value: formattedPrice,
+                        status: `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`,
+                        statusTone: change >= 0 ? 'text-emerald-400' : 'text-red-400'
+                    });
                 }
 
                 const fngResponse = await fetch('https://api.alternative.me/fng/?limit=1');
@@ -1156,8 +1307,11 @@
                 if (fngData && fngData.data && fngData.data[0]) {
                     const val = Number(fngData.data[0].value || 0);
                     const label = fngData.data[0].value_classification || 'Neutral';
-                    document.getElementById('fng-val').innerText = String(val);
-                    document.getElementById('fng-label').innerText = label;
+                    updateMetricTicker('fng', {
+                        value: String(val),
+                        status: label,
+                        statusTone: label.toLowerCase().includes('fear') ? 'text-red-400' : label.toLowerCase().includes('greed') ? 'text-amber-400' : 'text-slate-400'
+                    });
                     document.getElementById('gauge-number').innerText = String(val);
                     document.getElementById('gauge-text').innerText = label === 'Greed' ? 'Codicia Moderada' : label === 'Fear' ? 'Miedo Moderado' : 'Neutral';
 
@@ -1186,11 +1340,8 @@
                 await loadMacroData();
             } catch (e) {
                 console.warn('Error obteniendo datos en vivo, mostrando valor de respaldo.', e);
-                document.getElementById('btc-price').innerText = '$84,000.00';
-                document.getElementById('btc-change').innerText = '+0.00%';
-                document.getElementById('btc-change').className = 'text-xs font-semibold px-1.5 py-0.5 rounded text-emerald-400 bg-emerald-500/10';
-                document.getElementById('fng-val').innerText = '50';
-                document.getElementById('fng-label').innerText = 'Neutral';
+                updateMetricTicker('btc', { value: '$84,000.00', status: '+0.00%', statusTone: 'text-emerald-400' });
+                updateMetricTicker('fng', { value: '50', status: 'Neutral', statusTone: 'text-slate-400' });
                 document.getElementById('gauge-number').innerText = '50';
                 document.getElementById('gauge-text').innerText = 'Neutral';
                 document.getElementById('social-sentiment-value').innerText = '50% Alcista';
@@ -1263,6 +1414,7 @@
         }
 
         window.onload = function() {
+            initializeMetricTicker();
             renderNews();
             renderUpcomingNews();
             renderTrendCoins(trendFallbacks);
